@@ -1,6 +1,10 @@
 # De(ep)Composition: Deep Research for Argumentation by Query Decomposition
 
-Deep research pipelines summarize. Debate needs a side. De(ep)Composition is a deep research pipeline for argumentation: it decomposes a research question into a directed acyclic graph of sub-questions, answers the leaves by web search, composes each parent from its children under generated composition instructions, refines nodes whose answers have gaps, and writes a report that argues the root answer. The paper compares it with OpenAI Deep Research and STORM on debate-style prompts: [`paper/main.pdf`](paper/main.pdf).
+Deep research systems such as OpenAI Deep Research and STORM search the web and write a cited survey of a question. Many tasks need an argument instead: a position, with evidence behind each claim that supports it.
+
+De(ep)Composition plans the argument before it searches. It decomposes the question into a directed acyclic graph of sub-questions, answers each leaf with retrieval-augmented generation, and composes every parent from its children under generated instructions. Where a composed answer is incomplete, it adds new sub-questions. The final report argues the answer at the root, and every source keeps one citation number across the whole graph, so each claim traces back to the page it came from.
+
+The [paper](paper/main.pdf) compares De(ep)Composition with OpenAI Deep Research and STORM on ten contested questions and measures whether each citation points to the source its claim came from.
 
 ## Setup
 
