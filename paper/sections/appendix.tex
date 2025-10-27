@@ -1,6 +1,6 @@
 \section{Prompts}
 \label{app:prompts}
-This appendix reproduces the instructions of the DSPy signatures used for the evaluation runs. Input and output fields are omitted, and lists that span several lines in the original are joined into sentences.
+We reproduce the instructions used for the DSPy signatures on the evaluation runs, without the input and output fields, and concatenating multi-line lists into sentences.
 
 \begin{lstlisting}[title={LayerChildGenerationSignature (Phase 1, one layer of children)}]
 Generate children for a specific parent node in the research DAG.
@@ -73,45 +73,47 @@ FORMATTING REQUIREMENTS: The report title (# heading) should be the CLAIM, not t
 
 \section{An Example DAG}
 \label{app:dag}
-\Cref{fig:dag} shows the DAG from a logged run on the motion ``Should the United States federal government substantially increase social services for persons living in poverty?'' with the depth capped at 2. The planner divided the root question into the current landscape of federal services and the likely effects of expanding them, and divided each of these into two leaves. After composing the landscape node, the refinement check judged that child care and family tax credits were missing, and the pipeline attached a refinement sub-tree with two new leaves, shown shaded. The \dagLeaves{} leaves of the run retrieved \dagLeafSources{} distinct sources, or \dagLeafSourcesMean{} per leaf. Of the \dagRootSources{} sources available at the root, \dagRootFromRefinement{} came from the refinement sub-tree, so refinement contributed about a third of the evidence. The final report contains \dagReportWords{} words and \dagReportCitations{} citations and cites all \dagReportSources{} sources, although \Cref{sec:citations} shows that these citations do not match their claims. The full log, with the answer and citations of every node, is included in the repository.
+\Cref{fig:dag} shows a DAG from a logged run that considered whether the US federal government should substantially increase social services for persons living in poverty. In this example run, we set the DAG depth to 2. The initial planner decomposed the question into the current landscape of federal services, and the likely effects of increasing services. Each of those two topics were further decomposed into 2 leaf questions. After the composition of the landscape node, the refinement check found that child care and family tax credit information was missing, so the pipeline attached a refinement subtree with 2 new leaves (shown shaded).
+
+Across the \dagLeaves{} leaves of this run, we retrieved \dagLeafSources{} distinct sources (\dagLeafSourcesMean{} per leaf, on average). Of the \dagRootSources{} sources available at the root, \dagRootFromRefinement{} of them were from the refinement subtree. Thus, the refinement step contributed about a third of the total evidence base. The final report has \dagReportWords{} words, \dagReportCitations{} citations, and cites all \dagReportSources{} sources. \Cref{sec:citations} shows that the citations do not match the claims they support. We provide the full log in the repository, which shows the answers and citations of each node.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{figs/example_dag.pdf}
-\caption{A generated and refined DAG. Arrows point from parent to child. Shaded nodes were added by refinement after the composed answer of node 2 was judged incomplete.}
+\caption{A generated and refined DAG. Arrows indicate parent $\rightarrow$ child. Nodes shaded were added when the refinement step found the composed answer for node 2 to be incomplete.}
 \label{fig:dag}
 \end{figure}
 
 \section{Code Versions}
 \label{app:changes}
-Three versions of the pipeline are relevant to this study, and two of them are available.
+There are three versions of the pipeline relevant to this study, two of which we have available.
 \begin{enumerate}
-    \item \textbf{Evaluated version.} The reports in \Cref{sec:experiments,sec:analysis} were finalized on 2 December 2025. The prompts of this version, reproduced in \Cref{app:prompts}, are taken from the authors' course report. In this version the DAG is generated one layer at a time, composition instructions are written in a second pass, gaps are identified by a two-pass explorer and evaluator, and the bibliography separates cited from uncited sources. The code of this version is not in the public repository.
-    \item \textbf{Repository version.} The last commit in the original repository, dated 26 November 2025, generates the whole DAG and its composition instructions in a single call (\texttt{FullDAGGenerationSignature}) and checks for gaps with a single validator (\texttt{CompositionValidator}) that reports none unless a core aspect of the question is missing. The logged run in \Cref{app:dag} was produced by this version, and its handling of citations is the one analyzed in \Cref{sec:mechanism}. The course report states that citations were later given global numbers, but that change is not present in this version.
-    \item \textbf{Corrected version.} The public repository contains the repository version with a configurable model provider, with unused code removed, and with the citation correction described in \Cref{sec:citations}. The correction consists of global citation numbers, the replacement of node references with source citations, revised prompts, and the attribution audit (\texttt{utils/citations.py} and \texttt{utils/attribution\_audit.py}), together with tests that replay the logged run.
+    \item \textbf{Evaluated version.} The reports we included in \Cref{sec:experiments,sec:analysis} were finalized on 2 December 2025. The prompts for this version are reproduced in \Cref{app:prompts}, and are the same as those included in our course report. In this version of the pipeline, the DAG is built one layer at a time, composition instructions are written on a second pass, gaps are identified by a two-pass explorer and evaluator, and the bibliography separates cited and uncited sources. We do not include the code for this version in the public repository.
+    \item \textbf{Repository version.} This is the state of the code as of the last commit in the repository (26 November 2025), which generates the entire DAG and its composition directions in a single call (\texttt{FullDAGGenerationSignature}). In this version a single validator (\texttt{CompositionValidator}) is used to check for gaps, and it reports none unless a core aspect of the question is missing. The logged run in \Cref{app:dag} was performed with this version, and the citation processing in this version is what we analyze in \Cref{sec:mechanism}. The course report mentions that citations were given global numbers later on, but this does not appear to have been done in this version.
+    \item \textbf{Corrected version.} This is the state of the code in the public repository, which is the repository version made configurable for the model provider, with unused code removed, and with the correction described in \Cref{sec:citations}. This correction consists of 5 steps: assigning global numbers to citations, replacing node references with source citations, revising prompts, adding an attribution audit (\texttt{utils/citations.py}, \texttt{utils/attribution\_audit.py}), and including tests to replay the logged run.
 \end{enumerate}
 % CHECK with Justin: is the evaluated version (Gradescope submission) available? If so, add it to the repository and confirm whether its parent composition still passed leaf-local citation numbers.
 
 \section{Report Statistics by Motion}
 \label{app:reports}
-\Cref{tab:reports} gives the length and the number of cited sources of each retained report. The medians in \Cref{tab:text} are computed from these values.
+\Cref{tab:reports} shows the word count and number of unique sources cited in the body of each report retained in the analysis. The medians in \Cref{tab:text} are based on these metrics.
 
 \begin{table}[t]
 \centering
 \small
 \input{tables/reports}
-\caption{Body length in words and number of distinct sources cited in the body of each retained report, and, for \sys{}, the number of sources listed in its bibliography.}
+\caption{Word count and number of unique sources cited in the body of each report retained in the analysis. For \sys{} we also include the number of sources listed in the bibliography.}
 \label{tab:reports}
 \end{table}
 
 \section{Stance Labels}
 \label{app:stance}
-The labels in \Cref{tab:stance} were assigned by reading the title and final paragraph of each \sys{} report. The repository records each label together with a short quotation from the final paragraph (\texttt{data/reports/stance\_labels.json}), so that every label can be checked against the text.
+Stance labels in \Cref{tab:stance} are assigned by reading the title and final paragraph of each \sys{} report. We store each label and a short quote of the final paragraph of each report in the repository (\texttt{data/reports/stance\_labels.json}), so that all labels can be verified against the report text.
 % CHECK with Jessie and Justin: read the ten final paragraphs and confirm the labels.
 
 \section{Word Lists}
 \label{app:lexicon}
-The rates in \Cref{tab:text} count whole-word, case-insensitive matches per 1{,}000 words of body text. The lists follow the categories of \citet{hyland2005metadiscourse}, adapted to argumentative reports.
+Rates in \Cref{tab:text} are based on whole-word, case-insensitive counts per 1{,}000 body words. The word lists are organized according to the categories in \citet{hyland2005metadiscourse} as they apply to argumentative reports.
 \begin{description}
 \item[Hedges.] may, might, could, possibly, perhaps, arguably, potentially, appears, appear, seems, seem, suggests, suggest, likely, unlikely, uncertain, unclear, debated, contested, controversial, depends, depending, can be, to some extent, in some cases, remains open.
 \item[Contrast markers.] however, on the other hand, conversely, while, whereas, although, though, nevertheless, nonetheless, critics, opponents, proponents, detractors, both sides.
