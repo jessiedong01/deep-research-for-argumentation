@@ -1,6 +1,6 @@
 \section{Prompts}
 \label{app:prompts}
-The instructions of the DSPy signatures used for the evaluation runs, verbatim. Input and output fields are omitted.
+This appendix reproduces the instructions of the DSPy signatures used for the evaluation runs. Input and output fields are omitted, and lists that span several lines in the original are joined into sentences.
 
 \begin{lstlisting}[title={LayerChildGenerationSignature (Phase 1, one layer of children)}]
 Generate children for a specific parent node in the research DAG.
@@ -42,7 +42,7 @@ CRITICAL RULES:
 \begin{lstlisting}[title={GapExplorer (Phase 2, refinement, first pass)}]
 Explore potential gaps that could enhance the composed answer.
 This is the FIRST PASS - be creative and identify any areas where the answer could be improved, even if they're minor enhancements. Don't filter yet.
-Think about: missing perspectives or viewpoints; unaddressed sub-questions or aspects; areas that could use more depth or detail; counterarguments or alternative viewpoints not covered; quantitative data or evidence gaps; temporal or geographic coverage gaps; edge cases or exceptions not mentioned.
+Think about: missing perspectives or viewpoints. Unaddressed sub-questions or aspects. Areas that could use more depth or detail. Counterarguments or alternative viewpoints not covered. Quantitative data or evidence gaps. Temporal or geographic coverage gaps. Edge cases or exceptions not mentioned.
 Return a list of potential gaps, even if they seem minor. The second pass will determine which ones are critical enough to warrant refinement.
 \end{lstlisting}
 
@@ -59,21 +59,21 @@ Provide a confidence score (0.0-1.0) indicating how confident you are that refin
 
 \begin{lstlisting}[title={OutlineFromDAGSignature (Phase 3)}]
 Generate a report outline that structures a persuasive argument from DAG research.
-The DAG represents a research question decomposed into sub-questions. Each node answered a question through research. The root node has the final answer; child nodes contain supporting evidence that led to that answer.
+The DAG represents a research question decomposed into sub-questions. Each node answered a question through research. The root node has the final answer. Child nodes contain supporting evidence that led to that answer.
 Create an outline for a persuasive report arguing a definitive stance for the root answer. Use the DAG's hierarchy to organize evidence: child findings support parent conclusions. Structure as a logical argument (Executive Summary, Evidence Sections, Conclusion).
-REQUIREMENTS: Start with Executive Summary stating root answer prominently; organize body sections to build argument logically using DAG hierarchy; use ## for main sections, ### for subsections; design for prose writing (paragraphs, not just lists); base outline ONLY on content actually present in root_answer (no placeholders).
+REQUIREMENTS: Start with Executive Summary stating root answer prominently. Organize body sections to build argument logically using DAG hierarchy. Use ## for main sections, ### for subsections. Design for prose writing (paragraphs, not just lists). Base outline ONLY on content actually present in root_answer (no placeholders).
 \end{lstlisting}
 
 \begin{lstlisting}[title={ReportFromDAGSignature (Phase 3)}]
 Generate a comprehensive final report from the DAG results.
 The report must: 1. Start with the root answer prominently (matching its format) 2. Follow the provided outline structure 3. Incorporate findings from all DAG nodes 4. Take a clear stance that matches the root answer 5. Preserve all citations [X] from the DAG 6. Be well-written, coherent, and comprehensive
 CRITICAL STANCE ALIGNMENT: If root answer is "Yes" (boolean), the report must argue FOR that position. If root answer is "No" (boolean), the report must argue AGAINST. If root answer is a list, the report should be organized around those items. The report's conclusion must align with the root answer. Do not contradict or hedge against the root answer's stance.
-FORMATTING REQUIREMENTS: The report title (# heading) should be the CLAIM, not the question. Use proper markdown; write in prose paragraphs with supporting bullet points where appropriate; do not include internal node references in the output; only use citation numbers like [1], [2], [3]; every section must contain substantive content from the dag_results; do not include a bibliography section (it is added later).
+FORMATTING REQUIREMENTS: The report title (# heading) should be the CLAIM, not the question. Use proper markdown. Write in prose paragraphs with supporting bullet points where appropriate. Do not include internal node references in the output. Only use citation numbers like [1], [2], [3]. Every section must contain substantive content from the dag_results. Do not include a bibliography section (it is added later).
 \end{lstlisting}
 
 \section{An Example DAG}
 \label{app:dag}
-\Cref{fig:dag} shows the DAG from a logged run on the motion ``Should the United States federal government substantially increase social services for persons living in poverty?'' with depth capped at 2. The planner split the root into the current landscape of services and the likely effects of expanding them, and each of those into two leaves. After composing the landscape node, the refinement check judged that child care and family tax credits were missing, and the pipeline attached a refinement sub-tree with two new leaves (shaded). The run's \dagLeaves{} leaves retrieved \dagLeafSources{} distinct sources, \dagLeafSourcesMean{} per leaf, and \dagRootFromRefinement{} of the root's \dagRootSources{} sources came from the refinement sub-tree, so refinement added about a third of the evidence. The final report has \dagReportWords{} words and \dagReportCitations{} citations and cites all \dagReportSources{} sources; \Cref{sec:citations} shows that its citations nonetheless do not match their claims. The full log, with every node's answer and citations, is in the repository.
+\Cref{fig:dag} shows the DAG from a logged run on the motion ``Should the United States federal government substantially increase social services for persons living in poverty?'' with the depth capped at 2. The planner divided the root question into the current landscape of federal services and the likely effects of expanding them, and divided each of these into two leaves. After composing the landscape node, the refinement check judged that child care and family tax credits were missing, and the pipeline attached a refinement sub-tree with two new leaves, shown shaded. The \dagLeaves{} leaves of the run retrieved \dagLeafSources{} distinct sources, or \dagLeafSourcesMean{} per leaf. Of the \dagRootSources{} sources available at the root, \dagRootFromRefinement{} came from the refinement sub-tree, so refinement contributed about a third of the evidence. The final report contains \dagReportWords{} words and \dagReportCitations{} citations and cites all \dagReportSources{} sources, although \Cref{sec:citations} shows that these citations do not match their claims. The full log, with the answer and citations of every node, is included in the repository.
 
 \begin{figure}[t]
 \centering
@@ -84,17 +84,17 @@ FORMATTING REQUIREMENTS: The report title (# heading) should be the CLAIM, not t
 
 \section{Code Versions}
 \label{app:changes}
-Three versions of the pipeline are involved, and only two are available.
+Three versions of the pipeline are relevant to this study, and two of them are available.
 \begin{enumerate}
-    \item \textbf{Evaluated version.} The reports in \Cref{sec:experiments,sec:analysis} were finalized on 2 December 2025. Its prompts are the ones in \Cref{app:prompts}, taken from the authors' course write-up: the DAG is generated one layer at a time, composition instructions are written in a second pass, gaps are found by a two-pass explorer and evaluator, and the bibliography separates cited from uncited sources. This version's code is not in the public repository.
-    \item \textbf{Repository version.} The last commit in the repository, from 26 November 2025, generates the whole DAG and its composition instructions in one call (\texttt{FullDAGGenerationSignature}) and checks gaps with one validator (\texttt{CompositionValidator}) that returns none unless a core aspect is missing. The logged run in \Cref{app:dag} comes from this version. Its citation handling is the one analyzed in \Cref{sec:mechanism}. The course write-up reports that citations were later given global numbers; that change is not in this version.
-    \item \textbf{Released version.} The repository version with the provider made configurable, legacy code removed, and the citation fix of \Cref{sec:citations}: global citation numbers, node-reference expansion, the updated prompts, and the attribution audit (\texttt{utils/citations.py}, \texttt{utils/attribution\_audit.py}), with tests that replay the logged run.
+    \item \textbf{Evaluated version.} The reports in \Cref{sec:experiments,sec:analysis} were finalized on 2 December 2025. The prompts of this version, reproduced in \Cref{app:prompts}, are taken from the authors' course report. In this version the DAG is generated one layer at a time, composition instructions are written in a second pass, gaps are identified by a two-pass explorer and evaluator, and the bibliography separates cited from uncited sources. The code of this version is not in the public repository.
+    \item \textbf{Repository version.} The last commit in the original repository, dated 26 November 2025, generates the whole DAG and its composition instructions in a single call (\texttt{FullDAGGenerationSignature}) and checks for gaps with a single validator (\texttt{CompositionValidator}) that reports none unless a core aspect of the question is missing. The logged run in \Cref{app:dag} was produced by this version, and its handling of citations is the one analyzed in \Cref{sec:mechanism}. The course report states that citations were later given global numbers, but that change is not present in this version.
+    \item \textbf{Corrected version.} The public repository contains the repository version with a configurable model provider, with unused code removed, and with the citation correction described in \Cref{sec:citations}. The correction consists of global citation numbers, the replacement of node references with source citations, revised prompts, and the attribution audit (\texttt{utils/citations.py} and \texttt{utils/attribution\_audit.py}), together with tests that replay the logged run.
 \end{enumerate}
 % CHECK with Justin: is the evaluated version (Gradescope submission) available? If so, add it to the repository and confirm whether its parent composition still passed leaf-local citation numbers.
 
 \section{Report Statistics by Motion}
 \label{app:reports}
-\Cref{tab:reports} gives the length and sourcing of each retained report. The medians in \Cref{tab:text} are computed from these values.
+\Cref{tab:reports} gives the length and the number of cited sources of each retained report. The medians in \Cref{tab:text} are computed from these values.
 
 \begin{table}[t]
 \centering
@@ -106,12 +106,12 @@ Three versions of the pipeline are involved, and only two are available.
 
 \section{Stance Labels}
 \label{app:stance}
-The labels in \Cref{tab:stance} come from reading each \sys{} report's title and final paragraph. The repository records each label with a short quotation from the final paragraph (\texttt{data/reports/stance\_labels.json}) so that it can be checked.
+The labels in \Cref{tab:stance} were assigned by reading the title and final paragraph of each \sys{} report. The repository records each label together with a short quotation from the final paragraph (\texttt{data/reports/stance\_labels.json}), so that every label can be checked against the text.
 % CHECK with Jessie and Justin: read the ten final paragraphs and confirm the labels.
 
 \section{Word Lists}
 \label{app:lexicon}
-Rates in \Cref{tab:text} count whole-word, case-insensitive matches per 1{,}000 words of body text. The lists follow the categories of \citet{hyland2005metadiscourse}, adapted to argumentative reports.
+The rates in \Cref{tab:text} count whole-word, case-insensitive matches per 1{,}000 words of body text. The lists follow the categories of \citet{hyland2005metadiscourse}, adapted to argumentative reports.
 \begin{description}
 \item[Hedges.] may, might, could, possibly, perhaps, arguably, potentially, appears, appear, seems, seem, suggests, suggest, likely, unlikely, uncertain, unclear, debated, contested, controversial, depends, depending, can be, to some extent, in some cases, remains open.
 \item[Contrast markers.] however, on the other hand, conversely, while, whereas, although, though, nevertheless, nonetheless, critics, opponents, proponents, detractors, both sides.

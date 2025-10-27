@@ -162,6 +162,11 @@ def main():
         for f, nd in (("pairs", 0), ("claims", 0), ("median_pct", 2), ("pct_lo", 2), ("pct_hi", 2), ("top3", 2), ("top3_chance", 2), ("best_cited", 2), ("best_chance", 2), ("mean_candidates", 0)):
             if f in r:
                 macros[f"at{k}{''.join(w.capitalize() for w in f.split('_')).replace('3', 'Three')}"] = f"{r[f]:.{nd}f}" if nd else f"{int(round(r[f]))}"
+    for r in results:
+        k = names[r["setting"]]
+        for f in ("best_cited", "best_chance"):
+            if f in r:
+                macros[f"at{k}{''.join(w.capitalize() for w in f.split('_'))}Pct"] = f"{100 * r[f]:.0f}"
     import statistics as st
     macros["atBibMed"] = f"{st.median(c['bib'] for c in conc):.0f}"; macros["atUsedMed"] = f"{st.median(c['used'] for c in conc):.0f}"
     macros["atUsedMin"] = min(c["used"] for c in conc); macros["atUsedMax"] = max(c["used"] for c in conc)
