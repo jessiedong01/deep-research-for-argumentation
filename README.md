@@ -1,10 +1,10 @@
-# De(ep)Composition: Deep Research for Argumentation by Query Decomposition
+# Deep Research for Argumentation by Query Decomposition
 
-Deep research systems such as OpenAI Deep Research and STORM search the web and write a cited survey of a question. Many tasks need an argument instead: a position, with evidence behind each claim that supports it.
+Deep research systems such as OpenAI Deep Research and STORM search the web and write a cited survey of a question. Many tasks need an argument instead, a position with evidence behind each claim that supports it.
 
-De(ep)Composition plans the argument before it searches. It decomposes the question into a directed acyclic graph of sub-questions, answers each leaf with retrieval-augmented generation, and composes every parent from its children under generated instructions. Where a composed answer is incomplete, it adds new sub-questions. The final report argues the answer at the root, and every source keeps one citation number across the whole graph, so each claim traces back to the page it came from.
+This pipeline plans the argument before it searches. It decomposes the question into a directed acyclic graph of sub-questions, answers each leaf with retrieval-augmented generation, and composes every parent from its children under generated instructions. Where a composed answer is incomplete, it adds new sub-questions. The final report argues the answer at the root. Every source keeps one citation number across the whole graph, so each claim traces back to the page it came from.
 
-The [paper](paper/main.pdf) compares De(ep)Composition with OpenAI Deep Research and STORM on ten contested questions and measures whether each citation points to the source its claim came from.
+The [paper](paper/main.pdf) compares the pipeline with OpenAI Deep Research and STORM on ten contested questions and measures whether each citation points to the source its claim came from.
 
 ## Setup
 
@@ -33,7 +33,7 @@ cd paper && tectonic -X compile main.tex
 
 ## Data
 
-`data/reports/` holds the 20 retained evaluation reports (De(ep)Composition and STORM, 10 motions), the motions, and the stance labels. `output/results.json` and `examples/` hold the logs of two runs. `data/link_check.json` records the link check.
+`data/reports/` holds the 20 retained evaluation reports (this pipeline and STORM, 10 motions), the motions, and the stance labels. `output/results.json` and `examples/` hold the logs of two runs. `data/link_check.json` records the link check.
 
 ## Authors
 
